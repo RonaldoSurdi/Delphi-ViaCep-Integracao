@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{9CCEB215-34CF-42A2-A82E-4C716BFE5F7D}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="ViacepServer\ViacepServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ViacepDesktop\ViacepDesktop.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="ViacepServer">
+        <MSBuild Projects="ViacepServer\ViacepServer.dproj"/>
+    </Target>
+    <Target Name="ViacepServer:Clean">
+        <MSBuild Projects="ViacepServer\ViacepServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ViacepServer:Make">
+        <MSBuild Projects="ViacepServer\ViacepServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ViacepDesktop">
+        <MSBuild Projects="ViacepDesktop\ViacepDesktop.dproj"/>
+    </Target>
+    <Target Name="ViacepDesktop:Clean">
+        <MSBuild Projects="ViacepDesktop\ViacepDesktop.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ViacepDesktop:Make">
+        <MSBuild Projects="ViacepDesktop\ViacepDesktop.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="ViacepServer;ViacepDesktop"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="ViacepServer:Clean;ViacepDesktop:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="ViacepServer:Make;ViacepDesktop:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
