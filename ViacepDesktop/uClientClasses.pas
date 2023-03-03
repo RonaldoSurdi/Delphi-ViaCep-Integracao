@@ -1,6 +1,6 @@
 //
 // Created by the DataSnap proxy generator.
-// 01/03/2023 14:16:41
+// 02/03/2023 22:45:43
 // 
 
 unit uClientClasses;
@@ -31,7 +31,7 @@ type
     function GetPessoa(idpessoa: string; const ARequestFilter: string = ''): TFDJSONDataSets;
     function GetPessoa_Cache(idpessoa: string; const ARequestFilter: string = ''): IDSRestCachedTFDJSONDataSets;
     function UpdateEndereco(idendereco: string; dscep: string; const ARequestFilter: string = ''): Boolean;
-    function InsertPessoa(idpessoa: string; flnatureza: string; dsdocumento: string; nmprimeiro: string; nmsegundo: string; dscep: string; const ARequestFilter: string = ''): Boolean;
+    function InsertPessoa(flnatureza: string; dsdocumento: string; nmprimeiro: string; nmsegundo: string; dscep: string; const ARequestFilter: string = ''): Boolean;
     function UpdatePessoa(idpessoa: string; flnatureza: string; dsdocumento: string; nmprimeiro: string; nmsegundo: string; dscep: string; const ARequestFilter: string = ''): Boolean;
     function DeletePessoa(idpessoa: string; const ARequestFilter: string = ''): Boolean;
     procedure ApplyPessoa(ADeltaList: TFDJSONDeltas);
@@ -68,9 +68,8 @@ const
     (Name: ''; Direction: 4; DBXType: 4; TypeName: 'Boolean')
   );
 
-  TServerMethods1_InsertPessoa: array [0..6] of TDSRestParameterMetaData =
+  TServerMethods1_InsertPessoa: array [0..5] of TDSRestParameterMetaData =
   (
-    (Name: 'idpessoa'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: 'flnatureza'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: 'dsdocumento'; Direction: 1; DBXType: 26; TypeName: 'string'),
     (Name: 'nmprimeiro'; Direction: 1; DBXType: 26; TypeName: 'string'),
@@ -183,7 +182,7 @@ begin
   Result := FUpdateEnderecoCommand.Parameters[2].Value.GetBoolean;
 end;
 
-function TServerMethods1Client.InsertPessoa(idpessoa: string; flnatureza: string; dsdocumento: string; nmprimeiro: string; nmsegundo: string; dscep: string; const ARequestFilter: string): Boolean;
+function TServerMethods1Client.InsertPessoa(flnatureza: string; dsdocumento: string; nmprimeiro: string; nmsegundo: string; dscep: string; const ARequestFilter: string): Boolean;
 begin
   if FInsertPessoaCommand = nil then
   begin
@@ -192,14 +191,13 @@ begin
     FInsertPessoaCommand.Text := 'TServerMethods1.InsertPessoa';
     FInsertPessoaCommand.Prepare(TServerMethods1_InsertPessoa);
   end;
-  FInsertPessoaCommand.Parameters[0].Value.SetWideString(idpessoa);
-  FInsertPessoaCommand.Parameters[1].Value.SetWideString(flnatureza);
-  FInsertPessoaCommand.Parameters[2].Value.SetWideString(dsdocumento);
-  FInsertPessoaCommand.Parameters[3].Value.SetWideString(nmprimeiro);
-  FInsertPessoaCommand.Parameters[4].Value.SetWideString(nmsegundo);
-  FInsertPessoaCommand.Parameters[5].Value.SetWideString(dscep);
+  FInsertPessoaCommand.Parameters[0].Value.SetWideString(flnatureza);
+  FInsertPessoaCommand.Parameters[1].Value.SetWideString(dsdocumento);
+  FInsertPessoaCommand.Parameters[2].Value.SetWideString(nmprimeiro);
+  FInsertPessoaCommand.Parameters[3].Value.SetWideString(nmsegundo);
+  FInsertPessoaCommand.Parameters[4].Value.SetWideString(dscep);
   FInsertPessoaCommand.Execute(ARequestFilter);
-  Result := FInsertPessoaCommand.Parameters[6].Value.GetBoolean;
+  Result := FInsertPessoaCommand.Parameters[5].Value.GetBoolean;
 end;
 
 function TServerMethods1Client.UpdatePessoa(idpessoa: string; flnatureza: string; dsdocumento: string; nmprimeiro: string; nmsegundo: string; dscep: string; const ARequestFilter: string): Boolean;

@@ -2,7 +2,7 @@ object fMenu: TfMenu
   Left = 0
   Top = 0
   Caption = 'Menu de integra'#231#227'o'
-  ClientHeight = 574
+  ClientHeight = 617
   ClientWidth = 938
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -10,51 +10,9 @@ object fMenu: TfMenu
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poScreenCenter
   OnActivate = FormActivate
   TextHeight = 15
-  object Panel1: TPanel
-    Left = 0
-    Top = 542
-    Width = 938
-    Height = 32
-    Align = alBottom
-    TabOrder = 0
-    ExplicitTop = 528
-    ExplicitWidth = 934
-    object Label1: TLabel
-      Left = 1
-      Top = 1
-      Width = 49
-      Height = 30
-      Align = alLeft
-      Alignment = taRightJustify
-      Caption = 'Servidor: '
-      Layout = tlCenter
-      ExplicitHeight = 15
-    end
-    object edtHostName: TEdit
-      AlignWithMargins = True
-      Left = 55
-      Top = 6
-      Width = 235
-      Height = 20
-      Margins.Left = 5
-      Margins.Top = 5
-      Margins.Right = 5
-      Margins.Bottom = 5
-      Align = alLeft
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 0
-      Text = '127.0.0.1'
-      TextHint = 'Hostname or IP Address'
-      ExplicitHeight = 21
-    end
-  end
   object pnTitle: TPanel
     Left = 0
     Top = 0
@@ -70,34 +28,33 @@ object fMenu: TfMenu
     Font.Style = []
     ParentBackground = False
     ParentFont = False
-    TabOrder = 1
+    TabOrder = 0
     ExplicitWidth = 934
   end
   object pnRegistros: TPanel
     Left = 0
     Top = 61
     Width = 666
-    Height = 481
+    Height = 537
     Align = alClient
-    TabOrder = 2
-    ExplicitWidth = 402
-    ExplicitHeight = 467
+    TabOrder = 1
+    ExplicitWidth = 662
+    ExplicitHeight = 536
     object DBNavigatorRegistros: TDBNavigator
       Left = 1
       Top = 1
       Width = 664
       Height = 48
-      DataSource = ClientModule1.DataSource1
       VisibleButtons = [nbFirst, nbPrior, nbNext, nbLast]
       Align = alTop
       TabOrder = 0
-      ExplicitWidth = 400
+      ExplicitWidth = 660
     end
     object DBGridRegistros: TDBGrid
       Left = 1
       Top = 49
       Width = 664
-      Height = 431
+      Height = 487
       Align = alClient
       DataSource = ClientModule1.DataSource1
       FixedColor = clBtnShadow
@@ -113,56 +70,67 @@ object fMenu: TfMenu
         item
           Expanded = False
           FieldName = 'idpessoa'
+          Title.Caption = 'Id'
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'flnatureza'
+          Title.Caption = 'Natureza'
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'dsdocumento'
+          Title.Caption = 'Documento'
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'nmprimeiro'
+          Title.Caption = 'Primeiro nome'
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'nmsegundo'
+          Title.Caption = 'Segundo nome'
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'dscep'
+          Title.Caption = 'Cep'
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'nmcidade'
+          Title.Caption = 'Cidade'
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'nmlogradouro'
+          Title.Caption = 'Logradouro'
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'nmbairro'
+          Title.Caption = 'Bairro'
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'dscomplemento'
+          Title.Caption = 'Complemento'
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'dtregistro'
+          Title.Caption = 'Data registro'
           Visible = True
         end>
     end
@@ -171,12 +139,11 @@ object fMenu: TfMenu
     Left = 666
     Top = 61
     Width = 272
-    Height = 481
+    Height = 537
     Align = alRight
-    TabOrder = 3
-    ExplicitLeft = 405
-    ExplicitTop = 55
-    ExplicitHeight = 468
+    TabOrder = 2
+    ExplicitLeft = 662
+    ExplicitHeight = 536
     object lbFlNatureza: TLabel
       Left = 32
       Top = 49
@@ -260,7 +227,7 @@ object fMenu: TfMenu
     end
     object btGravar: TButton
       Left = 32
-      Top = 344
+      Top = 394
       Width = 209
       Height = 46
       Caption = 'Gravar'
@@ -286,13 +253,15 @@ object fMenu: TfMenu
     end
     object edDsCep: TEdit
       Left = 32
-      Top = 236
+      Top = 237
       Width = 129
       Height = 23
       MaxLength = 10
       TabOrder = 6
-      Text = '89.705-046'
       OnChange = edDsCepChange
+      OnEnter = edDsCepEnter
+      OnExit = edDsCepExit
+      OnKeyPress = edDsCepKeyPress
     end
     object btValidarCep: TButton
       Left = 167
@@ -305,7 +274,7 @@ object fMenu: TfMenu
     end
     object btAdicionar: TButton
       Left = 32
-      Top = 397
+      Top = 446
       Width = 209
       Height = 28
       Caption = 'Adicionar novo registro'
@@ -314,18 +283,18 @@ object fMenu: TfMenu
     end
     object btImportarArquivo: TButton
       Left = 32
-      Top = 432
+      Top = 480
       Width = 209
-      Height = 28
+      Height = 41
       Caption = 'Importar registros de arquivo'
       TabOrder = 9
       OnClick = btImportarArquivoClick
     end
     object edEndereco: TMemo
-      Left = 32
+      Left = 16
       Top = 266
-      Width = 209
-      Height = 72
+      Width = 241
+      Height = 122
       TabStop = False
       Alignment = taCenter
       BevelInner = bvNone
@@ -336,26 +305,18 @@ object fMenu: TfMenu
       TabOrder = 10
     end
   end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 598
+    Width = 938
+    Height = 19
+    Panels = <>
+    ExplicitTop = 597
+    ExplicitWidth = 934
+  end
   object DataSourceRegistros: TDataSource
     DataSet = ClientModule1.PessoaMemTable
     Left = 56
-    Top = 448
-  end
-  object FileImportDialog: TFileOpenDialog
-    FavoriteLinks = <>
-    FileTypes = <
-      item
-        DisplayName = 'TXT'
-        FileMask = '*.txt'
-      end
-      item
-        DisplayName = 'CSV'
-        FileMask = '*.csv'
-      end>
-    FileTypeIndex = 0
-    Options = []
-    Title = 'Importar registros de arquivo'
-    Left = 168
-    Top = 448
+    Top = 512
   end
 end

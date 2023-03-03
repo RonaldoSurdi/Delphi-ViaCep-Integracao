@@ -4,15 +4,13 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.json,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.ExtCtrls, Vcl.DBCtrls,
-  Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls, IdBaseComponent, IdComponent,
-  IdTCPConnection, IdTCPClient, IdHTTP, uViaCep, Vcl.FileCtrl;
+  System.UITypes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.ExtCtrls,
+  Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, Vcl.StdCtrls, IdBaseComponent, IdComponent,
+  IdTCPConnection, IdTCPClient, IdHTTP, uViaCep, Vcl.FileCtrl, Vcl.ComCtrls;
 
 type
   TfMenu = class(TForm)
     DataSourceRegistros: TDataSource;
-    Panel1: TPanel;
-    edtHostName: TEdit;
     pnTitle: TPanel;
     pnRegistros: TPanel;
     DBNavigatorRegistros: TDBNavigator;
@@ -29,14 +27,13 @@ type
     btGravar: TButton;
     btExcluir: TButton;
     edIdPessoa: TLabel;
-    Label1: TLabel;
     edDsCep: TEdit;
     lbDsCep: TLabel;
     btValidarCep: TButton;
     btAdicionar: TButton;
     btImportarArquivo: TButton;
     edEndereco: TMemo;
-    FileImportDialog: TFileOpenDialog;
+    StatusBar1: TStatusBar;
     procedure btAdicionarClick(Sender: TObject);
     procedure DBGridRegistrosCellClick(Column: TColumn);
     procedure btGravarClick(Sender: TObject);
@@ -45,11 +42,15 @@ type
     procedure btValidarCepClick(Sender: TObject);
     procedure edDsCepChange(Sender: TObject);
     procedure btImportarArquivoClick(Sender: TObject);
+    procedure edDsCepKeyPress(Sender: TObject; var Key: Char);
+    procedure edDsCepEnter(Sender: TObject);
+    procedure edDsCepExit(Sender: TObject);
   private
     { Private declarations }
+    onEdit: Boolean;
     procedure LimparEditsPessoa();
     procedure LimparEditsEndereco();
-    procedure ImportarCSV(FileName:String);
+    function Mascara(edt: String;str:String):string;
   public
     { Public declarations }
   end;
@@ -61,7 +62,7 @@ implementation
 
 {$R *.dfm}
 
-uses uDataModule, DBClient;
+uses uDataModule, DBClient, uImportFile;
 
 procedure TfMenu.LimparEditsPessoa();
 begin
@@ -69,7 +70,8 @@ begin
   edDsDocumento.Text := '';
   edNmPrimeiro.Text  := '';
   edNmSegundo.Text   := '';
-  edDsCep.Text       := '';
+  edDsCep.Text       := '99.999-999';
+  edDsCep.Font.Color := clGrayText;
 end;
 
 procedure TfMenu.LimparEditsEndereco();
@@ -82,8 +84,8 @@ procedure TfMenu.btAdicionarClick(Sender: TObject);
 var
   idNext: Integer;
 begin
-  idNext := DataSourceRegistros.DataSet.RecordCount + 1;
-  edIdPessoa.Caption :=  IntToStr(idNext);
+  onEdit:= false;
+  edIdPessoa.Caption :=  'NOVO';
   LimparEditsPessoa();
   LimparEditsEndereco();
   btGravar.Enabled := true;
@@ -102,6 +104,8 @@ begin
     ShowMessage('Redistro excluido com sucesso.');
 
     ClientModule1.LoadPessoa('');
+
+    onEdit:= false;
   end;
 end;
 
@@ -131,13 +135,13 @@ begin
     edNmSegundo.SetFocus;
     exit;
   end;
-  if (Length(edDsCep.Text) <> 10) then begin
+  if ((Length(edDsCep.Text) <> 10) or (edDsCep.Text = '99.999-999')) then begin
     ShowMessage('É necessário digitar o cep.');
     edDsCep.SetFocus;
     exit;
   end;
 
-  if (btExcluir.Enabled) then begin
+  if (onEdit) then
     ClientModule1.UpdateRegistro(
       edIdPessoa.Caption,
       edFlNatureza.Text,
@@ -145,98 +149,35 @@ begin
       edNmPrimeiro.Text,
       edNmSegundo.Text,
       edDsCep.Text
-    );
-  end else begin
+    )
+  else
     ClientModule1.InsertRegistro(
-      edIdPessoa.Caption,
       edFlNatureza.Text,
       edDsDocumento.Text,
       edNmPrimeiro.Text,
       edNmSegundo.Text,
       edDsCep.Text
     );
-  end;
 
+  ShowMessage('Redistro adicionado com sucesso.');
   btGravar.Enabled := true;
   btExcluir.Enabled := true;
   btAdicionar.Enabled := true;
 
-  ShowMessage('Redistro adicionado com sucesso.');
   ClientModule1.LoadPessoa('');
+  onEdit:= true;
 end;
-
 
 procedure TfMenu.btImportarArquivoClick(Sender: TObject);
 begin
-  if FileImportDialog.Execute then
-    if FileExists(FileImportDialog.FileName) then
-      ImportarCSV(FileImportDialog.FileName);
-end;
-
-procedure TfMenu.ImportarCSV(FileName:String);
-var
-  ArquivoCSV: TextFile;
-  Contador, I: Integer;
-  Linha: String;
-  flnaturezaParse: String;
-  dsdocumentoParse: String;
-  nmprimeiroParse: String;
-  nmsegundoParse: String;
-  dscepParse: String;
-  idNext: Integer;
-
-  function MontaValor: String;
-  var
-    ValorMontado: String;
-  begin
-    ValorMontado := '';
-    inc(I);
-    while (Length(Linha) >= I) do begin
-      if Linha[I] = ';' then
-        break;
-      ValorMontado := ValorMontado + Linha[I];
-      inc(I);
-    end;
-    result := ValorMontado;
-  end;
-
-begin
-  AssignFile(ArquivoCSV, FileName);
-
-  try
-    Reset(ArquivoCSV);
-    Contador := 1;
-    idNext := DataSourceRegistros.DataSet.RecordCount + 1;
-    while not Eoln(ArquivoCSV) do begin
-      Readln(ArquivoCSV, Linha);
-      I := 0;
-      flnaturezaParse:= MontaValor;
-      dsdocumentoParse:= MontaValor;
-      nmprimeiroParse:= MontaValor;
-      nmsegundoParse:= MontaValor;
-      dscepParse:= MontaValor;
-      ClientModule1.InsertRegistro(
-        IntToStr(idNext),
-        flnaturezaParse,
-        dsdocumentoParse,
-        nmprimeiroParse,
-        nmsegundoParse,
-        dscepParse
-      );
-      Inc(Contador);
-      Inc(idNext);
-    end;
-  finally
-    CloseFile(ArquivoCSV);
-  end;
-
-  ShowMessage('Redistros importados com sucesso.');
+  fImportFile.ShowModal();
   ClientModule1.LoadPessoa('');
 end;
 
 procedure TfMenu.btValidarCepClick(Sender: TObject);
 var
   resViaCep : TViaCep;
+  resComplemento: String;
 begin
   btValidarCep.Enabled:= false;
   try
@@ -246,7 +187,11 @@ begin
       edEndereco.Lines.Add(resViaCep.GetLocalidade + ' / ' + resViaCep.GetUf);
       edEndereco.Lines.Add(resViaCep.GetLogradouro);
       edEndereco.Lines.Add(resViaCep.GetBairro);
-      edEndereco.Lines.Add(resViaCep.GetComplemento);
+      resComplemento:= resViaCep.GetComplemento;
+      if (resComplemento = '') then
+        edEndereco.Lines.Add('(sem complemento)')
+      else
+        edEndereco.Lines.Add(resComplemento);
     end else begin
       LimparEditsEndereco();
       showMessage('CEP inválido ou não encontrado');
@@ -268,23 +213,68 @@ begin
   edEndereco.Lines.Add(DataSourceRegistros.DataSet.FieldByName('nmcidade').AsString);
   edEndereco.Lines.Add(DataSourceRegistros.DataSet.FieldByName('nmlogradouro').AsString);
   edEndereco.Lines.Add(DataSourceRegistros.DataSet.FieldByName('nmbairro').AsString);
-  edEndereco.Lines.Add(DataSourceRegistros.DataSet.FieldByName('dscomplemento').AsString);
+  if (DataSourceRegistros.DataSet.FieldByName('dscomplemento').AsString = '') then
+    edEndereco.Lines.Add('(sem complemento)')
+  else
+    edEndereco.Lines.Add(DataSourceRegistros.DataSet.FieldByName('dscomplemento').AsString);
 
+  edDsCep.Font.Color := clWindowText;
   btGravar.Enabled := true;
   btExcluir.Enabled := true;
   btAdicionar.Enabled := true;
   btValidarCep.Enabled := (DataSourceRegistros.DataSet.FieldByName('nmcidade').AsString <> '');
+
+  onEdit:= true;
+end;
+
+function TfMenu.Mascara(edt: String;str:String):string;
+var
+  i : integer;
+begin
+  for i := 1 to Length(edt) do begin
+     if (str[i] = '9') and not CharInSet(edt[i], ['0'..'9']) and (Length(edt)=Length(str)+1) then
+        delete(edt,i,1);
+     if (str[i] <> '9') and CharInSet(edt[i], ['0'..'9']) then
+        insert(str[i],edt, i);
+  end;
+  Result := edt;
 end;
 
 procedure TfMenu.edDsCepChange(Sender: TObject);
 begin
   btValidarCep.Enabled:= true;
+  edDsCep.Text := Mascara(edDsCep.Text,'99.999-999');
+  edDsCep.SelStart := Length(edDsCep.Text);
+end;
+
+procedure TfMenu.edDsCepEnter(Sender: TObject);
+begin
+  if (edDsCep.Text = '99.999-999') then begin
+    edDsCep.Text := '';
+    edDsCep.Font.Color := clWindowText;
+  end;
+end;
+
+procedure TfMenu.edDsCepExit(Sender: TObject);
+begin
+  if (edDsCep.Text = '') then begin
+    edDsCep.Text := '99.999-999';
+    edDsCep.Font.Color := clGrayText;
+  end;
+end;
+
+procedure TfMenu.edDsCepKeyPress(Sender: TObject; var Key: Char);
+begin
+  if not CharInSet(Key, ['0'..'9', #8]) then
+    Abort;
 end;
 
 procedure TfMenu.FormActivate(Sender: TObject);
 begin
-  ClientModule1.DSRestCnn.Host := edtHostName.Text;
+  ClientModule1.DSRestCnn.Host := '127.0.0.1';
   ClientModule1.LoadPessoa('');
+  edDsCep.Text := '99.999-999';
+  edDsCep.Font.Color := clGrayText;
 end;
 
 end.

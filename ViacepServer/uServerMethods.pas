@@ -40,7 +40,7 @@ type
     { Public declarations }
     function GetPessoa(const idpessoa: string): TFDJSONDataSets;
     function UpdateEndereco(const idendereco: string; dscep: string): Boolean;
-    function InsertPessoa(idpessoa: String; flnatureza: String; dsdocumento: String; nmprimeiro: String; nmsegundo: String; dscep: String): Boolean;
+    function InsertPessoa(flnatureza: String; dsdocumento: String; nmprimeiro: String; nmsegundo: String; dscep: String): Boolean;
     function UpdatePessoa(const idpessoa: String; flnatureza: String; dsdocumento: String; nmprimeiro: String; nmsegundo: String; dscep: String): Boolean;
     function DeletePessoa(const idpessoa: String): Boolean;
     procedure ApplyPessoa(const ADeltaList: TFDJSONDeltas);
@@ -93,7 +93,9 @@ end;
 function TServerMethods1.UpdateEndereco(const idendereco: string; dscep: string): Boolean;
 var
   resViaCep : TViaCepApi;
+  resultFunction: Boolean;
 begin
+  resultFunction:= false;
   try
     resViaCep := TViaCepApi.Create(dscep);
     if ((resViaCep.GetRespCode = 200) and (resViaCep.GetLocalidade <> '')) then begin
@@ -109,12 +111,11 @@ begin
         FDQueryExec.ExecSQL;
 
         FDConnection1.Commit;
-        Result:= true;
+        resultFunction:= true;
       except
         on E: Exception do
         begin
           FDConnection1.Rollback;
-          Result:= false;
           raise Exception.Create('Error Message: ' + E.Message);
         end;
       end;
@@ -122,49 +123,67 @@ begin
    finally
      FreeAndNil(resViaCep);
    end;
+
+   Result:= resultFunction;
 end;
 
-function TServerMethods1.InsertPessoa(idpessoa: String; flnatureza: String; dsdocumento: String; nmprimeiro: String; nmsegundo: String; dscep: String): Boolean;
+function TServerMethods1.InsertPessoa(flnatureza: String; dsdocumento: String; nmprimeiro: String; nmsegundo: String; dscep: String): Boolean;
 var
   sSQL: string;
+  idpessoa: Integer;
+  resultFunction: Boolean;
 begin
+  resultFunction:= false;
   FDConnection1.StartTransaction;
   try
     FDQueryExec.Close;
     FDQueryExec.SQL.Clear;
+    FDQueryExec.SQL.Add('SELECT MAX(idpessoa) FROM pessoa');
+    FDQueryExec.Open;
+    if (FDQueryExec.Fields[0].AsString = 'null') then
+      idpessoa:= 1
+    else
+      idpessoa:= FDQueryExec.Fields[0].AsInteger + 1;
+
+    FDQueryExec.Close;
+    FDQueryExec.SQL.Clear;
     FDQueryExec.SQL.Add('INSERT INTO pessoa (idpessoa,flnatureza,dsdocumento,nmprimeiro,nmsegundo,dtregistro)');
-    FDQueryExec.SQL.Add('VALUES (' + idpessoa + ',' + flnatureza + ',' + QuotedStr(dsdocumento) + ',' + QuotedStr(nmprimeiro) + ',' + QuotedStr(nmsegundo) + ',NOW())');
+    FDQueryExec.SQL.Add('VALUES (' + IntToStr(idpessoa) + ',' + flnatureza + ',' + QuotedStr(dsdocumento) + ',' + QuotedStr(nmprimeiro) + ',' + QuotedStr(nmsegundo) + ',NOW())');
     FDQueryExec.ExecSQL;
 
     FDQueryExec.Close;
     FDQueryExec.SQL.Clear;
     FDQueryExec.SQL.Add('INSERT INTO endereco (idendereco,idpessoa,dscep)');
-    FDQueryExec.SQL.Add('VALUES (' + idpessoa + ',' + idpessoa + ',' + QuotedStr(dscep) + ')');
+    FDQueryExec.SQL.Add('VALUES (' + IntToStr(idpessoa) + ',' + IntToStr(idpessoa) + ',' + QuotedStr(dscep) + ')');
     FDQueryExec.ExecSQL;
 
     FDQueryExec.Close;
     FDQueryExec.SQL.Clear;
     FDQueryExec.SQL.Add('INSERT INTO endereco_integracao (idendereco,nmcidade,nmbairro,nmlogradouro,dscomplemento)');
-    FDQueryExec.SQL.Add('VALUES (' + idpessoa + ',' + QuotedStr('') + ',' + QuotedStr('') + ',' + QuotedStr('') + ',' + QuotedStr('') + ')');
+    FDQueryExec.SQL.Add('VALUES (' + IntToStr(idpessoa) + ',' + QuotedStr('') + ',' + QuotedStr('') + ',' + QuotedStr('') + ',' + QuotedStr('') + ')');
     FDQueryExec.ExecSQL;
 
     FDConnection1.Commit;
-    Result:= true;
+    resultFunction:= true;
   except
     on E: Exception do
     begin
       FDConnection1.Rollback;
-      Result:= false;
       raise Exception.Create('Error Message: ' + E.Message);
     end;
   end;
-  UpdateEndereco(idpessoa, dscep);
+
+  if (resultFunction) then
+    Result:= UpdateEndereco(IntToStr(idpessoa), dscep)
+  else Result:= resultFunction;
 end;
 
 function TServerMethods1.UpdatePessoa(const idpessoa: String; flnatureza: String; dsdocumento: String; nmprimeiro: String; nmsegundo: String; dscep: String): Boolean;
 var
   sSQL: string;
+  resultFunction: Boolean;
 begin
+  resultFunction:= false;
   FDConnection1.StartTransaction;
   try
     FDQueryExec.Close;
@@ -174,22 +193,26 @@ begin
     FDQueryExec.ExecSQL;
 
     FDConnection1.Commit;
-    Result:= true;
+    resultFunction:= true;
   except
     on E: Exception do
     begin
       FDConnection1.Rollback;
-      Result:= false;
       raise Exception.Create('Error Message: ' + E.Message);
     end;
   end;
-  UpdateEndereco(idpessoa, dscep);
+
+  if (resultFunction) then
+    Result:= UpdateEndereco(idpessoa, dscep)
+  else Result:= resultFunction;
 end;
 
 function TServerMethods1.DeletePessoa(const idpessoa: String): Boolean;
 var
   sSQL: string;
+  resultFunction: Boolean;
 begin
+  resultFunction:= false;
   FDConnection1.StartTransaction;
   try
     FDQueryExec.Close;
@@ -199,15 +222,16 @@ begin
     FDQueryExec.ExecSQL;
 
     FDConnection1.Commit;
-    Result:= true;
+    resultFunction:= true;
   except
     on E: Exception do
     begin
       FDConnection1.Rollback;
-      Result:= false;
       raise Exception.Create('Error Message: ' + E.Message);
     end;
   end;
+
+  Result:= resultFunction;
 end;
 
 procedure TServerMethods1.ApplyPessoa(const ADeltaList: TFDJSONDeltas);

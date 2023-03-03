@@ -14,7 +14,6 @@ type
   TClientModule1 = class(TDataModule)
     DSRestCnn: TDSRestConnection;
     PessoaMemTable: TFDMemTable;
-    DataSource1: TDataSource;
     FDStanStorageJSONLink1: TFDStanStorageJSONLink;
     FDStanStorageBinLink1: TFDStanStorageBinLink;
     PessoaMemTableidpessoa: TLargeintField;
@@ -29,6 +28,7 @@ type
     PessoaMemTablenmbairro: TWideStringField;
     PessoaMemTabledscomplemento: TWideStringField;
     PessoaMemTabledtregistro: TDateField;
+    DataSource1: TDataSource;
   private
     FInstanceOwner: Boolean;
     FServerMethods1Client: TServerMethods1Client;
@@ -36,7 +36,7 @@ type
     { Private declarations }
   public
     procedure LoadPessoa(const idpessoa: string);
-    procedure InsertRegistro(const idpessoa: string; flnatureza: String; dsdocumento: String; nmprimeiro: String; nmsegundo: String; dscep: String);
+    procedure InsertRegistro(flnatureza: String; dsdocumento: String; nmprimeiro: String; nmsegundo: String; dscep: String);
     procedure UpdateRegistro(const idpessoa: string; flnatureza: String; dsdocumento: String; nmprimeiro: String; nmsegundo: String; dscep: String);
     procedure DeleteRegistro(const idpessoa: string);
     procedure SavePessoa;
@@ -89,9 +89,9 @@ begin
   PessoaMemTable.Open;
 end;
 
-procedure TClientModule1.InsertRegistro(const idpessoa: string; flnatureza: String; dsdocumento: String; nmprimeiro: String; nmsegundo: String; dscep: String);
+procedure TClientModule1.InsertRegistro(flnatureza: String; dsdocumento: String; nmprimeiro: String; nmsegundo: String; dscep: String);
 begin
-  ServerMethods1Client.InsertPessoa(idpessoa,flnatureza,dsdocumento,nmprimeiro,nmsegundo,dscep);
+  ServerMethods1Client.InsertPessoa(flnatureza,dsdocumento,nmprimeiro,nmsegundo,dscep);
 end;
 
 procedure TClientModule1.UpdateRegistro(const idpessoa: string; flnatureza: String; dsdocumento: String; nmprimeiro: String; nmsegundo: String; dscep: String);

@@ -2,6 +2,7 @@ object ClientModule1: TClientModule1
   Height = 346
   Width = 481
   object DSRestCnn: TDSRestConnection
+    Host = 'localhost'
     Port = 8080
     LoginPrompt = False
     Left = 48
@@ -9,7 +10,64 @@ object ClientModule1: TClientModule1
     UniqueId = '{55C77D6E-3B89-41C1-9942-5C6E6E47F8DD}'
   end
   object PessoaMemTable: TFDMemTable
-    FieldDefs = <>
+    Active = True
+    FieldDefs = <
+      item
+        Name = 'idpessoa'
+        DataType = ftLargeint
+      end
+      item
+        Name = 'idendereco'
+        DataType = ftLargeint
+      end
+      item
+        Name = 'flnatureza'
+        DataType = ftSmallint
+      end
+      item
+        Name = 'dsdocumento'
+        DataType = ftWideString
+        Size = 20
+      end
+      item
+        Name = 'nmprimeiro'
+        DataType = ftWideString
+        Size = 100
+      end
+      item
+        Name = 'nmsegundo'
+        DataType = ftWideString
+        Size = 100
+      end
+      item
+        Name = 'dscep'
+        DataType = ftWideString
+        Size = 15
+      end
+      item
+        Name = 'nmcidade'
+        DataType = ftWideString
+        Size = 100
+      end
+      item
+        Name = 'nmlogradouro'
+        DataType = ftWideString
+        Size = 100
+      end
+      item
+        Name = 'nmbairro'
+        DataType = ftWideString
+        Size = 50
+      end
+      item
+        Name = 'dscomplemento'
+        DataType = ftWideString
+        Size = 100
+      end
+      item
+        Name = 'dtregistro'
+        DataType = ftDate
+      end>
     IndexDefs = <>
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
@@ -84,12 +142,6 @@ object ClientModule1: TClientModule1
       Origin = 'dtregistro'
     end
   end
-  object DataSource1: TDataSource
-    AutoEdit = False
-    DataSet = PessoaMemTable
-    Left = 160
-    Top = 112
-  end
   object FDStanStorageJSONLink1: TFDStanStorageJSONLink
     Left = 192
     Top = 40
@@ -97,5 +149,10 @@ object ClientModule1: TClientModule1
   object FDStanStorageBinLink1: TFDStanStorageBinLink
     Left = 352
     Top = 40
+  end
+  object DataSource1: TDataSource
+    DataSet = PessoaMemTable
+    Left = 176
+    Top = 112
   end
 end

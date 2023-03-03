@@ -67,15 +67,14 @@ object FormMenu: TFormMenu
     TabOrder = 3
     OnClick = ButtonOpenBrowserClick
   end
-  object StatusBar1: TStatusBar
+  object sbMenu: TStatusBar
     Left = 0
     Top = 239
     Width = 399
     Height = 19
     Panels = <>
-    ExplicitLeft = 192
-    ExplicitTop = 256
-    ExplicitWidth = 0
+    ExplicitTop = 238
+    ExplicitWidth = 395
   end
   object ApplicationEvents1: TApplicationEvents
     OnIdle = ApplicationEvents1Idle

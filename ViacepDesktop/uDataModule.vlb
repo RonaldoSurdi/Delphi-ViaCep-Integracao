@@ -1,10 +1,6 @@
 ﻿[DSRestCnn]
 Coordinates=89,209,82,36
 
-[DataSource1]
-Coordinates=150,20,89,190
-Visible=True
-
 [ClienteMemTabledtregistro]
 Coordinates=242,1,169,36
 
@@ -33,5 +29,6 @@ Coordinates=10,10,115,190
 Coordinates=449,111,172,36
 
 []
-Coordinates=261,265,91,36
+Coordinates=150,20,89,190
+Visible=True
 

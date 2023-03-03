@@ -17,7 +17,7 @@ type
     ApplicationEvents1: TApplicationEvents;
     ButtonOpenBrowser: TButton;
     Label2: TLabel;
-    StatusBar1: TStatusBar;
+    sbMenu: TStatusBar;
     procedure FormCreate(Sender: TObject);
     procedure ApplicationEvents1Idle(Sender: TObject; var Done: Boolean);
     procedure ButtonStartClick(Sender: TObject);

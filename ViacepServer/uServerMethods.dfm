@@ -5,10 +5,10 @@ object ServerMethods1: TServerMethods1
   object FDConnection1: TFDConnection
     Params.Strings = (
       'DriverID=PG'
-      'Password=wkpass123'
+      'Password=Asverix67'
       'Server=127.0.0.1'
-      'Database=wkdbtest'
-      'User_Name=wkusertest')
+      'Database=wktest'
+      'User_Name=postgres')
     LoginPrompt = False
     Left = 80
     Top = 48

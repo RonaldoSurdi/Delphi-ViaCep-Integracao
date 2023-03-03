@@ -1,8 +1,10 @@
 unit uViaCepApi;
 
 interface
+
 uses
   IdTCPConnection, IdTCPClient, IdHTTP, IdSSLOpenSSL, System.json, System.SysUtils;
+
 type
   TViaCepApi = class
   private
@@ -22,7 +24,9 @@ type
     function GetGia : String;
     constructor Create(pCEP : String);
   end;
+
 implementation
+
 function TViaCepApi.GetStrNumber(const S: string): string;
 var
   vText : PChar;
@@ -41,6 +45,7 @@ begin
     Inc(vText);
   end;
 end;
+
 procedure TViaCepApi.BuscarCep(pCEP: String);
 var
   IdHTTP: TIdHTTP;
@@ -69,42 +74,52 @@ begin
   end;
   LerJson(Json);
 end;
+
 constructor TViaCepApi.Create(pCEP: String);
 begin
    BuscarCep(pCEP);
 end;
+
 function TViaCepApi.GetBairro: String;
 begin
   Result := Bairro;
 end;
+
 function TViaCepApi.GetComplemento: String;
 begin
   Result := Complemento;
 end;
+
 function TViaCepApi.GetGia: String;
 begin
   Result := Gia;
 end;
+
 function TViaCepApi.GetIBGE: String;
 begin
   Result := IBGE;
 end;
+
 function TViaCepApi.GetLocalidade: String;
 begin
   Result := Localidade;
 end;
+
 function TViaCepApi.GetLogradouro: String;
 begin
   Result := Logradouro;
 end;
+
 function TViaCepApi.GetRespCode: Integer;
 begin
   Result := RespCode;
 end;
+
 function TViaCepApi.GetUF: String;
 begin
   Result := UF;
 end;
+
 procedure TViaCepApi.LerJson(pJson: String);
 var
   umJSONObject : TJSONObject;
