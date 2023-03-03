@@ -5,16 +5,15 @@ object ServerMethods1: TServerMethods1
   object FDConnection1: TFDConnection
     Params.Strings = (
       'DriverID=PG'
-      'Password=Asverix67'
+      'Password=wkpass123'
       'Server=127.0.0.1'
-      'Database=wktest'
-      'User_Name=postgres')
+      'Database=wkdbtest'
+      'User_Name=wkusertest')
     LoginPrompt = False
     Left = 80
     Top = 48
   end
   object FDPhysPgDriverLink1: TFDPhysPgDriverLink
-    VendorLib = 'C:\pg\pgAdmin 4\bin\libpq.dll'
     Left = 64
     Top = 400
   end
