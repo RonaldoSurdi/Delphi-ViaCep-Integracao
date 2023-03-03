@@ -9,10 +9,10 @@ type
     const
         NoOfTimes = 1000000;
     private
-        Idx  : Integer;
-        FRegIndex  : Integer;
-        FLine      : String;
-        FSuccess   : Boolean;
+        CharPosInLine : Integer;
+        FRegIndex     : Integer;
+        FLine         : String;
+        FSuccess      : Boolean;
         function Value(const Linha: String): String;
     public
         procedure Start;
@@ -35,7 +35,7 @@ var
   ValorMontado: String;
 begin
   ValorMontado := '';
-  inc(Idx);
+  inc(CharPosInLine);
   while (Length(Linha) >= Idx) do begin
     if Linha[Idx] = ';' then
       break;
@@ -53,8 +53,7 @@ var
   nmsegundoParse,
   dscepParse: String;
 begin
-  Sleep(RegIndex * 100);
-  Idx := 0;
+  CharPosInLine := 0;
   flnaturezaParse:= Value(Line);
   dsdocumentoParse:= Value(Line);
   nmprimeiroParse:= Value(Line);

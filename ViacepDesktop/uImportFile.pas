@@ -115,6 +115,7 @@ begin
   try
     Reset(ArquivoCSV);
     while not Eoln(ArquivoCSV) do begin
+      Sleep(5);
       Inc(RegIndex);
       Readln(ArquivoCSV, Linha);
       WorkerThread                 := TWorkerThread.Create(True);
