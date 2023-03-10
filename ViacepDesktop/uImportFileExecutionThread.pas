@@ -36,11 +36,11 @@ var
 begin
   ValorMontado := '';
   inc(CharPosInLine);
-  while (Length(Linha) >= Idx) do begin
-    if Linha[Idx] = ';' then
+  while (Length(Linha) >= CharPosInLine) do begin
+    if Linha[CharPosInLine] = ';' then
       break;
-    ValorMontado := ValorMontado + Linha[Idx];
-    inc(Idx);
+    ValorMontado := ValorMontado + Linha[CharPosInLine];
+    inc(CharPosInLine);
   end;
   Result := ValorMontado;
 end;
